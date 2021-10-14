@@ -1,10 +1,8 @@
-import { Avatar, Card, CardHeader, CardContent, Typography, IconButton, Stack } from "@mui/material"
-import { red } from "@mui/material/colors";
-import React from "react"
+import { Card, CardHeader, CardContent, Typography, IconButton, Stack } from "@mui/material"
 import CircleTwoTone from '@mui/icons-material/CircleTwoTone';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Task from './Task';
-import { ITask, IBucket } from "../interfaces/AppData";
+import { IBucket } from "../interfaces/AppData";
 
 const Bucket = (props: any) => {
     const removeTask = (bucketId: string, taskId: string) => {
