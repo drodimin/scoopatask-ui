@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Paper, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material"
 import React from "react";
 
 const Task = (props: any) => {

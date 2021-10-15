@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Content from "./Content";
 
@@ -7,7 +6,7 @@ const Shell = () => {
         return new URLSearchParams(useLocation().search);
     };
 
-    const [code, _]  = useState<string | null>(useQuery().get('code'));
+    const code  = useQuery().get('code');
 
     console.log('Google code parameter:', code);
 
