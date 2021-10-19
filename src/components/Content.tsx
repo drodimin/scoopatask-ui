@@ -12,34 +12,42 @@ const Content = (props: any) => {
     useEffect(() => {
         const fetchData = async() => {
             try {
-            const serviceCheckResult: boolean = await api.serviceCheck();
-            
-            setIsServiceOk(serviceCheckResult);
-            if(!serviceCheckResult) {
-                return;
+                const serviceCheckResult: boolean = await api.serviceCheck();
+                setIsServiceOk(serviceCheckResult);
+                if(!serviceCheckResult) {
+                    return;
+                }
+            }catch(error){
+                console.log('Failed to check service status', error);
             }
             
-            let hasToken: boolean = false;
-            
-            if(sessionStorage.getItem('accessToken')) {
-                hasToken = true;
+            let accessToken = sessionStorage.getItem('accessToken');
+
+            if(!accessToken && props.googleAccessCode) {
+                try{
+                    const result = await api.handleAcessCode(props.googleAccessCode);
+                    accessToken = result.token;
+                    sessionStorage.setItem('accessToken', result.token);
+                }
+                catch(error){
+                    console.log('Failed exchanging access code for token', error);
+                }
             }
-            else if(props.googleAccessCode) {
-                const result: any = await api.handleAcessCode(props.googleAccessCode);
-                sessionStorage.setItem('accessToken', result.token);
-                hasToken = true;
-            }
             
-            if(hasToken) {
+            if(accessToken) {
                 //get user info
-                const userInfo = await api.signInWithToken();
-                console.log(userInfo);
-                setUser(userInfo);
-                //fetch data
-            }
-    
-            } catch(error){
-                console.log(error)
+                try{
+                    const userInfo = await api.signInWithToken(accessToken);
+                    console.log(userInfo);
+                    setUser(userInfo);
+                }
+                catch(error: any){
+                    if(error.response && error.response.status === 401) {
+                        sessionStorage.removeItem('accessToken');
+                        await api.signOut();
+                    }
+                    console.log('Failed to sign in with token', error);
+                }
             }
         }
         fetchData();
