@@ -1,15 +1,23 @@
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import * as api from '../api'
 import About from './About';
 import AppData from './AppData';
 import Header from './Header';
 
 const Content = (props: any) => {
+
+    const history = useHistory();
+    
     const [isServiceOk, setIsServiceOk] = useState(false);
     const [user, setUser] = useState(undefined);
 
     useEffect(() => {
+        const navigateRoot = () => {
+            history.push('/');
+        }
+
         const fetchData = async() => {
             try {
                 const serviceCheckResult: boolean = await api.serviceCheck();
@@ -26,12 +34,12 @@ const Content = (props: any) => {
             if(!accessToken && props.googleAccessCode) {
                 try{
                     const result = await api.handleAcessCode(props.googleAccessCode);
-                    accessToken = result.token;
                     sessionStorage.setItem('accessToken', result.token);
                 }
                 catch(error){
-                    console.log('Failed exchanging access code for token', error);
+                    console.log('Failed exchanging access code for token. Code might be expired', error);
                 }
+                navigateRoot();
             }
             
             if(accessToken) {
@@ -47,11 +55,12 @@ const Content = (props: any) => {
                         await api.signOut();
                     }
                     console.log('Failed to sign in with token', error);
+                    navigateRoot();
                 }
             }
         }
         fetchData();
-    }, [props.googleAccessCode])
+    }, [props.googleAccessCode, history])
 
     const handleSignOut = async() => {
         try {
