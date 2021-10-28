@@ -1,49 +1,66 @@
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import * as api from '../api'
 import About from './About';
 import AppData from './AppData';
 import Header from './Header';
 
 const Content = (props: any) => {
+
+    const history = useHistory();
+    
     const [isServiceOk, setIsServiceOk] = useState(false);
     const [user, setUser] = useState(undefined);
 
     useEffect(() => {
+        const navigateRoot = () => {
+            history.push('/');
+        }
+
         const fetchData = async() => {
             try {
-            const serviceCheckResult: boolean = await api.serviceCheck();
-            
-            setIsServiceOk(serviceCheckResult);
-            if(!serviceCheckResult) {
-                return;
+                const serviceCheckResult: boolean = await api.serviceCheck();
+                setIsServiceOk(serviceCheckResult);
+                if(!serviceCheckResult) {
+                    return;
+                }
+            }catch(error){
+                console.log('Failed to check service status', error);
             }
             
-            let hasToken: boolean = false;
-            
-            if(sessionStorage.getItem('accessToken')) {
-                hasToken = true;
+            let accessToken = sessionStorage.getItem('accessToken');
+
+            if(!accessToken && props.googleAccessCode) {
+                try{
+                    const result = await api.handleAcessCode(props.googleAccessCode);
+                    sessionStorage.setItem('accessToken', result.token);
+                }
+                catch(error){
+                    console.log('Failed exchanging access code for token. Code might be expired', error);
+                }
+                navigateRoot();
             }
-            else if(props.googleAccessCode) {
-                const result: any = await api.handleAcessCode(props.googleAccessCode);
-                sessionStorage.setItem('accessToken', result.token);
-                hasToken = true;
-            }
             
-            if(hasToken) {
+            if(accessToken) {
                 //get user info
-                const userInfo = await api.signInWithToken();
-                console.log(userInfo);
-                setUser(userInfo);
-                //fetch data
-            }
-    
-            } catch(error){
-                console.log(error)
+                try{
+                    const userInfo = await api.signInWithToken(accessToken);
+                    console.log(userInfo);
+                    setUser(userInfo);
+                }
+                catch(error: any){
+                    if(error.response && error.response.status === 401) {
+                        sessionStorage.removeItem('accessToken');
+                        await api.signOut();
+                    }
+                    console.log('Failed to sign in with token', error);
+                    navigateRoot();
+                }
             }
         }
         fetchData();
-    }, [props.googleAccessCode])
+    }, [props.googleAccessCode, history])
 
     const handleSignOut = async() => {
         try {

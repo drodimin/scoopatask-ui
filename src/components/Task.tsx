@@ -1,4 +1,5 @@
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material"
+import { CircleTwoTone } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Stack, Typography } from "@mui/material"
 import React from "react";
 
 const Task = (props: any) => {
@@ -11,15 +12,13 @@ const Task = (props: any) => {
     const task = props.task;
     return <Accordion expanded={expanded} onChange={handleChange}>
     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-      <Typography>{task.name}</Typography>
+        <Box sx={{mr:1}}><CircleTwoTone style={{fill: "orange"}}></CircleTwoTone></Box><Typography>{task.name}</Typography>
     </AccordionSummary>
     <AccordionDetails>
-      <Typography>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-        malesuada lacus ex, sit amet blandit leo lobortis eget. Lorem ipsum dolor
-        sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-        sit amet blandit leo lobortis eget.
-      </Typography>
+      <Stack direction="row" spacing={2}>
+        <Box><Button variant="outlined" color="success"  onClick={props.onComplete}>Complete</Button></Box>
+        <Box><Button variant="outlined" color="secondary"  onClick={props.onRemove}>Remove</Button></Box>
+      </Stack>
     </AccordionDetails>
   </Accordion>
 }
