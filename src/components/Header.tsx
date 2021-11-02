@@ -43,9 +43,9 @@ const Header = (props: any) =>
     return  <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" color="transparent">
             <Toolbar className = {classes.toolBar} disableGutters = {true}>
-                <img src={logo} alt="Logo" />
+                <Box sx={{m:{sm:0,md:1,lg:2}}}><img src={logo} alt="Logo" /></Box>
                 <Box sx={{ flexGrow: 1 }} />
-                <Box>
+                <Box sx={{m:{sm:0,md:1,lg:2}}}>
                     {loginContent}
                 </Box>
             </Toolbar>
