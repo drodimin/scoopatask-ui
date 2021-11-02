@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 const About = () => {
     return <Box sx={{alignSelf:'center', m:"auto", lineHeight: 1.5, width: {
