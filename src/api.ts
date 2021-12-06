@@ -37,7 +37,7 @@ export const getGoogleLink = async():Promise<string> => {
 }
 
 export const handleAcessCode = async(code: string):Promise<any> => {
-  log('Logging in with google access code.');
+  log('Logging in with google access code: ' + code);
   return kyBase('googlecode?code=' + code).json();
 }
 

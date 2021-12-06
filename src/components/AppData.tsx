@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react"
 import * as api from '../api'
 import { IBucket } from "../interfaces/AppData";
@@ -8,12 +8,19 @@ import Bucket from "./Bucket";
 const AppData = () => {
 
     const [buckets, setBuckets] = useState<IBucket[]>();
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         const fetchData = async() => {
+            try{
             const res = await api.getData();
             console.log(res);
             setBuckets(res._buckets);
+            }
+            catch(error: any){
+                console.log('Failed loading data', error)
+                setError(true)
+            }
         }
         fetchData();
     }, [])
@@ -34,12 +41,17 @@ const AppData = () => {
         setBuckets(updatedBuckets);
     }
 
-    return <Stack spacing={1} alignItems="center">
-        <AddBucket onAdd={addBucket}></AddBucket>
+    let content;
+    if(error) {
+        content = <Typography variant="h5">Something went wrong. Failed to load data.</Typography>;
+    } else {
+        content = <><AddBucket onAdd={addBucket}></AddBucket>
         { buckets && buckets.map((bucket, index) => (
                 <Bucket key={bucket._id} bucket={bucket} onDelete={() => removeBucket(bucket._id, index)}></Bucket>
             ))
-        }</Stack>;
+        }</>
+    }
+    return <Stack spacing={1} alignItems="center">{content}</Stack>;
 }
 
 export default AppData;
