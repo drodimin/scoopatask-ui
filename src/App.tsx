@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Shell from './components/Shell';
-import { Box, createTheme, ThemeProvider, Typography } from '@mui/material';
+import { createTheme, ThemeProvider, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { IDataContext, IUser } from './interfaces/DataContext';
 import Agreement from './components/Agreement';

@@ -7,14 +7,11 @@ import { AddCircleTwoTone, ChevronLeft, ChevronRight } from "@mui/icons-material
 import bucketImage from '../assets/bucket.png'
 import BucketMenu from "./BucketMenu";
 import { useDrag, useDrop } from 'react-dnd'
-import { IDraggable } from "../interfaces/IDraggable";
 
 const Bucket = (props: any) => {
 
     const [bucket, setBucket] = useState<IBucket>(props.bucket);
     const [addTaskText, setAddTaskText] = useState('');
-    const [isHover, setIsHover] = useState(false);
-
     
     const completeTask = async(bucketId: string, taskId: string) => {
         try{
