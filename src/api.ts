@@ -86,3 +86,7 @@ export const getData = async():Promise<IAppData> => {
   export const addBucket = (name: string):Promise<IBucket> => {
     return kyAuth.post(`bucket`, { json: {name: name}}).json();
   }
+
+  export const moveBucket = (targetBucketId:string, destBucketId: string): Promise<IBucket[]> => {
+    return kyAuth.get(`bucket/${targetBucketId}/moveBefore/${destBucketId}`).json();
+  }
