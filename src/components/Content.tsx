@@ -66,7 +66,7 @@ const Content = (props: any) => {
     return (
             
           <React.Fragment>
-            <Box sx={{mt:1}}>
+            <Box sx={{mt:1}} style={{height:'100vh', width:'100%'}}>
                 {!isServiceOk && <div>Service is currently not available. Please try later</div>}
                 {user.email ? <AppData></AppData> : <About></About>}
             </Box>

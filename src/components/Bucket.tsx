@@ -1,16 +1,20 @@
-import { Card, CardHeader, CardContent, Typography, IconButton, Stack, TextField } from "@mui/material"
+import { Card, CardHeader, CardContent, Typography, IconButton, Stack, TextField, Box } from "@mui/material"
 import Task from './Task';
 import { IBucket } from "../interfaces/AppData";
 import * as api from "../api";
-import { useState } from "react";
-import { AddCircleTwoTone } from "@mui/icons-material";
+import React, { useState } from "react";
+import { AddCircleTwoTone, ChevronLeft, ChevronRight } from "@mui/icons-material";
 import bucketImage from '../assets/bucket.png'
 import BucketMenu from "./BucketMenu";
+import { useDrag, useDrop } from 'react-dnd'
+import { IDraggable } from "../interfaces/IDraggable";
 
 const Bucket = (props: any) => {
 
     const [bucket, setBucket] = useState<IBucket>(props.bucket);
     const [addTaskText, setAddTaskText] = useState('');
+    const [isHover, setIsHover] = useState(false);
+
     
     const completeTask = async(bucketId: string, taskId: string) => {
         try{
@@ -40,7 +44,28 @@ const Bucket = (props: any) => {
         }
     }
 
-    return <Card sx={{ width: 345}}>
+    const [{ isDragging }, dragRef] = useDrag({
+        item: { name: bucket.name, type: 'bucket', id: bucket._id },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    });
+
+    const [{ canDrop, isOver }, dropRef] = useDrop({
+        accept: ['bucket'],
+        drop: (item: any) => {
+            console.log(`insert bucket ${item.id} before ${bucket._id}`, props.onMove);
+            props.onMove(item.id, bucket._id);
+        },
+        collect: (monitor) => ({
+          isOver: monitor.isOver(),
+          canDrop: monitor.canDrop() && bucket._id !== monitor.getItem().id
+        })
+      });
+    
+    return <Stack sx={{ width: 345 }} ref={dropRef}>
+    {canDrop && isOver && <Box display="flex" justifyContent="center" sx={{width: '100%', height: 25, color: 'ForestGreen' }}> <ChevronRight/><strong>Drop to move bucket here</strong><ChevronLeft/></Box>}
+    <Card sx={{ width: 345, opacity: isDragging ? 0.5 : 1}} ref={dragRef}>
          <CardHeader
             avatar={<img src={bucketImage} alt="bucket"/>}
             action={
@@ -65,5 +90,7 @@ const Bucket = (props: any) => {
             }</Stack>
         </CardContent>
     </Card>
+    </Stack>
 }
 export default Bucket;
+

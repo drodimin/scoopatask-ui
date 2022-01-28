@@ -7,7 +7,28 @@ import { IDataContext, IUser } from './interfaces/DataContext';
 import Agreement from './components/Agreement';
 import * as api from './api'
 import Header from './components/Header';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import MultiBackend, { TouchTransition, MouseTransition } from 'react-dnd-multi-backend';
+import { ViewportProvider } from './utils/ViewportContext';
 
+const CustomHTML5toTouch = {
+  backends: [
+    {
+      backend: HTML5Backend,
+      transition: MouseTransition
+    },
+    {
+      backend: TouchBackend,
+      // Note that you can call your backends with options
+      options: { enableMouseEvents: true, enableHoverOutsideTarget: true },
+      transition: TouchTransition,
+      // will not dispatch a duplicate `touchstart` event when this backend is activated
+      skipDispatchOnTransition: true
+    }
+  ]
+};
 
 export const DataContext = React.createContext<IDataContext>({userContext:{ user:{}, loginUser: ()=>{}, handleSignOut: () => Promise.resolve()}} );
 
@@ -65,22 +86,20 @@ const App = () => {
   }
   else {
     return <Router>
-          <ThemeProvider theme={theme}><DataContextProvider>  
-          <Header></Header>      
-          <Box sx={{alignSelf:'center', m:'auto', lineHeight: 1.5, width: {
-            xs: 325,
-            sm: 400,
-            md: 800,
-            lg: 1000
-          }}} >   
-              <Route exact path="/">
-                <Shell/>
-              </Route>
-              <Route exact path="/agreement">
-                <Agreement/>
-              </Route>              
-            </Box>
-        </DataContextProvider>  
+          <ThemeProvider theme={theme}>
+            <ViewportProvider>         
+              <DataContextProvider> 
+                <Header></Header> 
+                <DndProvider backend={MultiBackend} options={CustomHTML5toTouch}>                
+                      <Route exact path="/">
+                        <Shell/>
+                      </Route>
+                      <Route exact path="/agreement">
+                        <Agreement/>
+                      </Route>                       
+                </DndProvider>
+            </DataContextProvider>
+          </ViewportProvider>  
         </ThemeProvider>    
         </Router>
   }
