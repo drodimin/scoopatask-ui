@@ -10,12 +10,12 @@ const Task = (props: any) => {
     }
 
     const task = props.task;
-    return <Accordion expanded={expanded} onChange={handleChange}>
+    return <Accordion expanded={expanded} onChange={handleChange} sx={{width:"100%"}}>
     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
         <Box sx={{mr:1}}><CircleTwoTone style={{fill: "orange"}}></CircleTwoTone></Box><Typography>{task.name}</Typography>
     </AccordionSummary>
     <AccordionDetails>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} justifyContent="space-between">
         <Box><Button variant="outlined" color="success"  onClick={props.onComplete}>Complete</Button></Box>
         <Box><Button variant="outlined" color="secondary"  onClick={props.onRemove}>Remove</Button></Box>
       </Stack>

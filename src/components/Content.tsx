@@ -1,19 +1,19 @@
 import { Box } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import * as api from '../api'
+import { DataContext } from '../App';
 import About from './About';
 import AppData from './AppData';
-import Header from './Header';
 
 const Content = (props: any) => {
 
     const history = useHistory();
-    
+    const { userContext: {user, loginUser} } = useContext(DataContext);
     const [isServiceOk, setIsServiceOk] = useState(false);
-    const [user, setUser] = useState(undefined);
+    const login = useRef(loginUser);
 
-    useEffect(() => {
+    useEffect(() => {      
         const navigateRoot = () => {
             history.push('/');
         }
@@ -35,6 +35,7 @@ const Content = (props: any) => {
                 try{
                     const result = await api.handleAcessCode(props.googleAccessCode);
                     sessionStorage.setItem('accessToken', result.token);
+                    console.log('Received Access Token:', result.token);
                 }
                 catch(error){
                     console.log('Failed exchanging access code for token. Code might be expired', error);
@@ -47,7 +48,7 @@ const Content = (props: any) => {
                 try{
                     const userInfo = await api.signInWithToken(accessToken);
                     console.log(userInfo);
-                    setUser(userInfo);
+                    login.current(userInfo);
                 }
                 catch(error: any){
                     if(error.response && error.response.status === 401) {
@@ -60,25 +61,14 @@ const Content = (props: any) => {
             }
         }
         fetchData();
-    }, [props.googleAccessCode, history])
-
-    const handleSignOut = async() => {
-        try {
-            await api.signOut();
-            sessionStorage.removeItem('accessToken');
-            setUser(undefined);
-        } catch(error) {
-            console.log('Failed to sign out', error)
-        }
-    }
+    }, [props.googleAccessCode, history, login])
 
     return (
             
           <React.Fragment>
-            <Header user = {user} signOut={handleSignOut}></Header>
-            <Box sx={{mt:1}}>
+            <Box sx={{mt:1, width:'100%'}}>
                 {!isServiceOk && <div>Service is currently not available. Please try later</div>}
-                {user ? <AppData></AppData> : <About></About>}
+                {user.email ? <AppData></AppData> : <About></About>}
             </Box>
           </React.Fragment>
       )
