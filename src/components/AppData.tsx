@@ -70,7 +70,7 @@ const AppData = () => {
             ))
         }</>
     }
-    return <ScrollingComponent style={{height: '100%', overflowY: breakpoint > width ? 'scroll' : 'hidden'}}>
+    return <ScrollingComponent style={{height: breakpoint > width ? 'calc(100vh - 180px)': '100%', overflowY: breakpoint > width ? 'scroll' : 'hidden'}}>
             <Stack spacing={1} alignItems="center">{content}</Stack>
         </ScrollingComponent>;
 }

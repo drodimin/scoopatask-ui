@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent, Typography, IconButton, Stack, TextField, Box } from "@mui/material"
+import { Card, CardHeader, CardContent, Typography, IconButton, Stack, TextField, Box, Avatar } from "@mui/material"
 import Task from './Task';
 import { IBucket } from "../interfaces/AppData";
 import * as api from "../api";
@@ -62,17 +62,18 @@ const Bucket = (props: any) => {
     
     return <Stack sx={{ width: 345 }} ref={dropRef}>
     {canDrop && isOver && <Box display="flex" justifyContent="center" sx={{width: '100%', height: 25, color: 'ForestGreen' }}> <ChevronRight/><strong>Drop to move bucket here</strong><ChevronLeft/></Box>}
-    <Card sx={{ width: 345, opacity: isDragging ? 0.5 : 1}} ref={dragRef}>
+    <Card sx={{ width: 345, opacity: isDragging ? 0.5 : 1}}>
          <CardHeader
-            avatar={<img src={bucketImage} alt="bucket"/>}
+            avatar={<Avatar ref={dragRef} style={{backgroundColor:"transparent"}}><img src={bucketImage} alt="bucket"/></Avatar>}
             action={
             <BucketMenu delete={props.onDelete}></BucketMenu>
             }
             title={<Typography variant="h6" component="div">{bucket.name}</Typography>}
-        />
+        />            
         <CardContent>
             <Stack spacing={1} alignItems="center">
                 <TextField
+                    sx={{width:"100%"}}
                     id="task-name"
                     label="New Task"
                     InputProps={{endAdornment: 
